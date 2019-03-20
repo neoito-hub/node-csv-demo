@@ -1,0 +1,61 @@
+<link href="/css/file_view.css" rel="stylesheet" type="text/css">
+<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<table class="table table-inverse">
+    <thead>
+      <tr>
+        <% for(var i=0; i < keys.length; i++) { %> 
+        
+        <% if(i==0){ %>
+        <th  id='header_<%=keys[i] %>'><%=keys[i] %></th>          
+        <% } else{ %>  
+        <th class='sort_by' id='sort_by_<%=keys[i] %>'><%=keys[i] %><i class="fa fa-fw fa-sort"></i></th>          
+       <% } %>
+
+        <% } %>
+
+      </tr>
+    </thead>
+
+    <tbody>
+      <% for(var i=0; i < data.length; i++) { %>
+     <tr>
+       <% for(var j=0; j < keys.length; j++) { %>
+       <td><%= data[i][keys[j]] %></td>
+       <% } %>
+     </tr>
+  <% } %>
+    </tbody>
+
+  </table>
+ <script>
+$(function() {
+    
+var sort_order = <%- JSON.stringify(sort_order_arr) %>;
+//re render the table when sort parameter is changed or sort order is changed
+$(".sort_by").on("click", function () {
+  let id = $(this).attr('id');  
+  let sort_key = id.replace('sort_by_','');
+  let sort_type = sort_order[sort_key]
+
+  //invert sort type value
+  if(sort_type == 'ASC' ){
+    sort_order[sort_key] = 'DSC'
+  }
+  else{
+    sort_order[sort_key] = 'ASC'
+  }
+  $.ajax({
+    type: 'GET',
+    url: '/view_file',
+    data:{
+        sort_by:sort_key,
+        sort_order:sort_order
+    },
+    success: function(result) {
+      $('#target').html(result);
+    }
+  });
+});
+});
+ 
+ </script>
